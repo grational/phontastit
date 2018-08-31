@@ -1,3 +1,5 @@
-= phontastit
+= PhontastIT
 
-A 'gigawatt' powered project.
+A library used to recognize the type of an Italian Phone Number
+
+Read the api documentation https://grational.github.io/phontastit/groovydoc/index.html[HERE].
