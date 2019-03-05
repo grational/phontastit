@@ -45,10 +45,10 @@ class ItalianPhoneNumber {
 	private PhoneNumberType heuristic(String phone) {
 		PhoneNumberType type
 		switch(localPhoneNumber(phone)) {
-			case ~/^0\d{8,9}$/:
+			case ~/^0\d{5,10}$/:
 				type = PhoneNumberType.LANDLINE
 				break
-			case ~/^3[1234689]\d\d{6,7}$/:
+			case ~/^3[1234689]\d\d{6,8}$/:
 				type = PhoneNumberType.MOBILE
 				break
 			case ~/^80[03]\d+$/:

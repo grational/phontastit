@@ -54,6 +54,16 @@ class ItalianPhoneNumberUSpec extends Specification {
 			'+39 011 8193736'  | false || PhoneNumberType.LANDLINE
 			'+39 011 8193736'  | true  || PhoneNumberType.FAX
 			'+39 011 8193736'  | true  || PhoneNumberType.FAX
+			// test case from https://jira.italiaonline.it/browse/COL-1739
+			'02989442'         | false || PhoneNumberType.LANDLINE
+			// shortest LANDLINE
+			'022881'           | false || PhoneNumberType.LANDLINE
+			// longest  LANDLINE
+			'09977933544'      | false || PhoneNumberType.LANDLINE
+			// shortest MOBILE
+			'324611069'        | false || PhoneNumberType.MOBILE
+			// longest  MOBILE
+			'33124165852'      | false || PhoneNumberType.MOBILE
 	}
 
 }
