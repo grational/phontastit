@@ -48,7 +48,7 @@ class ItalianPhoneNumber {
 			case ~/^0\d{5,10}$/:
 				type = PhoneNumberType.LANDLINE
 				break
-			case ~/^3[1234689]\d\d{6,8}$/:
+			case ~/^3[1-9]\d\d{6,8}$/:
 				type = PhoneNumberType.MOBILE
 				break
 			case ~/^80[03]\d+$/:

@@ -64,6 +64,8 @@ class ItalianPhoneNumberUSpec extends Specification {
 			'324611069'        | false || PhoneNumberType.MOBILE
 			// longest  MOBILE
 			'33124165852'      | false || PhoneNumberType.MOBILE
+			// case from https://aziende.virgilio.it/amministrazioni-immobiliari/chieri-to/amministratoregestioneimmobili_cibiib
+			'373 7915844'      | false || PhoneNumberType.MOBILE
 	}
 
 }
