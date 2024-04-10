@@ -10,41 +10,20 @@ plugins {
 	id 'java-library'
 	// support for groovy
 	id 'groovy'
-	// autogenerate eclipse project files
-	id 'eclipse'
-	// create an html index linking every report generated
-	id 'build-dashboard'
-	// view of the project (jars used, navigable source tree)
-	id 'project-report'
-	// groovy code linter
-	id 'codenarc'
-	// test code coverage plugin
-	id 'net.saliman.cobertura' version '2.6.0'
 	// awesome git tag / gradle version integration
-	id 'pl.allegro.tech.build.axion-release' version '1.10.0'
+	id 'pl.allegro.tech.build.axion-release' version '1.14.+'
 }
 
 // [general] configuration
-project.ext {
-	groovyVersion       = '2.5.6'
-	gradleVersion       = '5.2.1'
-	spockVersion        = '1.2-groovy-2.5'
-	codenarcVersion     = '1.3'
-	slf4jVersion        = '1.7.26'
-
-	wrapper.gradleVersion "$gradleVersion"
-}
-
 project.with {
 	//project.name is set in the settings.gradle with rootProject.name
-	group                 "it.grational.phontastit"
-	version               scmVersion.version
-	description           "A 'gigawatt' powered project."
+	group 'it.grational.phontastit'
+	version scmVersion.version
+	description "A 'gigawatt' powered project."
 }
 // [crosscompile] source and target java version
 allprojects {
-	sourceCompatibility = '1.8'
-	targetCompatibility = sourceCompatibility
+	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 repositories {
@@ -56,62 +35,39 @@ repositories {
 
 dependencies {
 	// Groovy language support
-	implementation "org.codehaus.groovy:groovy:$groovyVersion"
-
-	// Slf4j dependencies
-	implementation "org.slf4j:slf4j-api:$slf4jVersion"
-
+	implementation (
+		'org.codehaus.groovy:groovy:3.0.21',
+		'org.slf4j:slf4j-api:2.0.12'
+	)
 
 	// We use the awesome Spock testing and specification framework
-	testImplementation "org.spockframework:spock-core:$spockVersion"
+	testImplementation (
+		"org.spockframework:spock-core:2.3-groovy-3.0"
+	)
 }
 
-// codenarc groovy source analyses
-codenarc{
-	toolVersion = "$codenarcVersion"
-
-	codenarcMain {
-		configFile = rootProject.file('conf/codenarc/ruleset.groovy')
-		exclude "**/package-info.*"
-		ignoreFailures true       // does not block builds
-		maxPriority1Violations 0
-		maxPriority2Violations 10
-		maxPriority3Violations 20
-	}
-	codenarcTest {
-		configFile = rootProject.file('conf/codenarc/ruleset-test.groovy')
-		ignoreFailures true
-		maxPriority1Violations 0
-		maxPriority2Violations 10
-		maxPriority3Violations 20
+configurations.configureEach {
+	resolutionStrategy {
+		componentSelection {
+			all { ComponentSelection selection ->
+				String version = selection.candidate.version
+				if (version ==~ /.*[-_.]?(alpha|beta).*/) {
+					reject("Rejecting $version as it's an excluded version")
+				}
+			}
+		}
 	}
 }
 
 // [tasks] configuration //
-jar {
-	// execute check task when create the jar
-	dependsOn 'check'
-}
-
-check {
-	// create the code coverage report
-	dependsOn 'cobertura'
-}
-
 release {
 	// test everything before a release
 	dependsOn 'test'
 }
 
 // [tasks] definition
-task listJars {
-	description = 'print out the jars used by the project'
-	doLast {
-		configurations.compile.each { File file -> println file.name }
-	}
-}
-
 tasks.withType(Test) {
+	useJUnitPlatform()
 	maxParallelForks = Runtime.runtime.availableProcessors() / 2
 }
 task uniTest(type: Test) {
