@@ -12,6 +12,8 @@ plugins {
 	id 'groovy'
 	// awesome git tag / gradle version integration
 	id 'pl.allegro.tech.build.axion-release' version '1.14.+'
+	// publish on a maven-compatible repository
+	id 'maven-publish'
 }
 
 // [general] configuration
@@ -59,6 +61,16 @@ configurations.configureEach {
 	}
 }
 
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			groupId = 'com.github.grational'
+			artifactId = 'phontastit'
+			version = scmVersion.version // '0.5.0' (remove -SNAPSHOT for releases)
+			from components.java
+		}
+	}
+}
 // [tasks] configuration //
 release {
 	// test everything before a release
