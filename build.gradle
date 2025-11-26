@@ -11,25 +11,34 @@ plugins {
 	// support for groovy
 	id 'groovy'
 	// awesome git tag / gradle version integration
-	id 'pl.allegro.tech.build.axion-release' version '1.14.+'
+	id 'pl.allegro.tech.build.axion-release' version '1.21.1'
 	// publish on a maven-compatible repository
 	id 'maven-publish'
 }
 
 // [general] configuration
+project.ext {
+	groovyGroupId = 'org.apache.groovy'
+	groovyVersion = '4.0.29'
+}
+
 project.with {
 	//project.name is set in the settings.gradle with rootProject.name
 	group 'it.grational.phontastit'
 	version scmVersion.version
 	description "A 'gigawatt' powered project."
 }
+
 // [crosscompile] source and target java version
-allprojects {
-	targetCompatibility = JavaVersion.VERSION_1_8
+java {
+	// java features available in the source code
+	sourceCompatibility = JavaVersion.toVersion('21')
+	// java version 21 is required to execute the project
+	targetCompatibility = sourceCompatibility
 }
 
 repositories {
-	jcenter()
+	mavenCentral()
 
 	// leverage github as a maven repository
 	maven { url 'https://jitpack.io' }
@@ -38,13 +47,13 @@ repositories {
 dependencies {
 	// Groovy language support
 	implementation (
-		'org.codehaus.groovy:groovy:3.0.21',
-		'org.slf4j:slf4j-api:2.0.12'
+		"${groovyGroupId}:groovy:${groovyVersion}",
+		'org.slf4j:slf4j-api:2.0.17'
 	)
 
 	// We use the awesome Spock testing and specification framework
 	testImplementation (
-		"org.spockframework:spock-core:2.3-groovy-3.0"
+		"org.spockframework:spock-core:2.3-groovy-4.0"
 	)
 }
 
