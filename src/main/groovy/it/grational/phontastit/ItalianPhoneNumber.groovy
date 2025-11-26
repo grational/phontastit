@@ -1,5 +1,7 @@
 package it.grational.phontastit
 
+import groovy.transform.EqualsAndHashCode
+
 /**
  * PhontastIT
  * This class recognize the type of Italian phone numbers using a heuristic
@@ -7,6 +9,7 @@ package it.grational.phontastit
  * @author grational
  * @date 30-08-2018 20.34
  */
+@EqualsAndHashCode(includeFields = true, includes='phone')
 class ItalianPhoneNumber {
 	private final String  phone
 	private final Boolean fax
@@ -65,6 +68,13 @@ class ItalianPhoneNumber {
 
 	private localPhoneNumber(String phone) {
 		return phone.replaceFirst(/^(?:00|\+)39/,'')
+	}
+
+	@Override
+	String toString(boolean local = true) {
+		local
+			? this.localPhoneNumber(this.phone)
+			: this.phone
 	}
 
 }

@@ -53,7 +53,7 @@ class ItalianPhoneNumberUSpec extends Specification {
 			'0039 02 8193736'  | false || PhoneNumberType.LANDLINE
 			'+39 011 8193736'  | false || PhoneNumberType.LANDLINE
 			'+39 011 8193736'  | true  || PhoneNumberType.FAX
-			'+39 011 8193736'  | true  || PhoneNumberType.FAX
+			'0039 011 8193736' | true  || PhoneNumberType.FAX
 			// test case from https://jira.italiaonline.it/browse/COL-1739
 			'02989442'         | false || PhoneNumberType.LANDLINE
 			// shortest LANDLINE
@@ -66,6 +66,37 @@ class ItalianPhoneNumberUSpec extends Specification {
 			'33124165852'      | false || PhoneNumberType.MOBILE
 			// case from https://aziende.virgilio.it/amministrazioni-immobiliari/chieri-to/amministratoregestioneimmobili_cibiib
 			'373 7915844'      | false || PhoneNumberType.MOBILE
+	}
+
+	def "Should return the correct string phone rapresentation"() {
+		expect:
+			expected == new ItalianPhoneNumber(phone).toString(local)
+		where:
+			phone              | local || expected
+			'0039 800 200227'  | false || '0039800200227'
+			'+39 800 200227'   | false || '+39800200227'
+			'0039 800 200227'  | true  || '800200227'
+			'0039 899 200227'  | true  || '899200227'
+			'+39 348 9018484'  | false || '+393489018484'
+			'+39 348 9018484'  | true  || '3489018484'
+			'0039 335 5856641' | false || '00393355856641'
+			'0039 335 5856641' | true  || '3355856641'
+			'+39 02 8193736'   | false || '+39028193736'
+			'0039 02 8193736'  | false || '0039028193736'
+			'+39 011 8193736'  | true  || '0118193736'
+			'0039 011 8193736' | true  || '0118193736'
+			// shortest LANDLINE
+			'022881'           | false || '022881'
+			'022881'           | true  || '022881'
+			// longest  LANDLINE
+			'09977933544'      | false || '09977933544'
+			'09977933544'      | true  || '09977933544'
+			// shortest MOBILE
+			'324611069'        | false || '324611069'
+			'324611069'        | true  || '324611069'
+			// longest  MOBILE
+			'33124165852'      | false || '33124165852'
+			'33124165852'      | true  || '33124165852'
 	}
 
 }
