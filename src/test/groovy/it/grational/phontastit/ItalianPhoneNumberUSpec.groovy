@@ -1,6 +1,6 @@
 package it.grational.phontastit
 
-import spock.lang.Specification
+import spock.lang.*
 import java.text.ParseException
 
 /**
@@ -10,35 +10,25 @@ import java.text.ParseException
  */
 class ItalianPhoneNumberUSpec extends Specification {
 
-	def "Should raise a ArgumentException if one of the parameters is empty or null"() {
+	def "Should raise an IllegalArgumentException if one of the parameters is invalid"() {
 		when:
 			new ItalianPhoneNumber(phone, fax).type()
 		then:
 			def exception = thrown(IllegalArgumentException)
-			exception.message == "Empty or null phone number"
+			exception.message == "Cannot determine the phone number type of '${phone}'"
 		where:
-			phone | fax
-			null  | null
-			null  | false
-			''    | null
-			''    | false
-			null  | true
-			''    | true
+			phone             | fax
+			null              | null
+			null              | false
+			''                | null
+			''                | false
+			null              | true
+			''                | true
+			"+39 11 12345678" | false
+			"+ull"            | false
 	}
 
-	def "Should raise a ParseException if the number type cannot be determined"() {
-		when:
-			new ItalianPhoneNumber(phone).type()
-		then:
-			def exception = thrown(IllegalStateException)
-			exception.message == "Cannot determine the number '${phone.replaceAll(/ +/,'')}' correctly"
-		where:
-			phone << [
-				"+39 11 12345678",
-				"ull",
-			]
-	}
-
+	@Unroll
 	def "Should always return the correct number type"() {
 		expect:
 			expected == new ItalianPhoneNumber(phone, fax).type()
@@ -68,35 +58,141 @@ class ItalianPhoneNumberUSpec extends Specification {
 			'373 7915844'      | false || PhoneNumberType.MOBILE
 	}
 
-	def "Should return the correct string phone rapresentation"() {
+	def "Should return the correct string phone representation"() {
 		expect:
 			expected == new ItalianPhoneNumber(phone).toString(local)
 		where:
 			phone              | local || expected
-			'0039 800 200227'  | false || '0039800200227'
+			'0039 800 200227'  | false || '+39800200227'
 			'+39 800 200227'   | false || '+39800200227'
 			'0039 800 200227'  | true  || '800200227'
 			'0039 899 200227'  | true  || '899200227'
 			'+39 348 9018484'  | false || '+393489018484'
 			'+39 348 9018484'  | true  || '3489018484'
-			'0039 335 5856641' | false || '00393355856641'
+			'0039 335 5856641' | false || '+393355856641'
 			'0039 335 5856641' | true  || '3355856641'
 			'+39 02 8193736'   | false || '+39028193736'
-			'0039 02 8193736'  | false || '0039028193736'
+			'0039 02 8193736'  | false || '+39028193736'
 			'+39 011 8193736'  | true  || '0118193736'
 			'0039 011 8193736' | true  || '0118193736'
 			// shortest LANDLINE
-			'022881'           | false || '022881'
+			'022881'           | false || '+39022881'
 			'022881'           | true  || '022881'
 			// longest  LANDLINE
-			'09977933544'      | false || '09977933544'
+			'09977933544'      | false || '+3909977933544'
 			'09977933544'      | true  || '09977933544'
 			// shortest MOBILE
-			'324611069'        | false || '324611069'
+			'324611069'        | false || '+39324611069'
 			'324611069'        | true  || '324611069'
 			// longest  MOBILE
-			'33124165852'      | false || '33124165852'
+			'33124165852'      | false || '+3933124165852'
 			'33124165852'      | true  || '33124165852'
+	}
+
+	def "Should accept phone numbers with incomplete i18n prefix"() {
+		expect:
+			expected == new ItalianPhoneNumber(phone).toString(local)
+		where:
+			phone          | local  || expected
+			'390105957333' | false  || '+390105957333'
+			'390105957333' | true   || '0105957333'
+			'390239435196' | false  || '+390239435196'
+			'390239435196' | true   || '0239435196'
+			'390292108960' | false  || '+390292108960'
+			'390292108960' | true   || '0292108960'
+			'390321390000' | false  || '+390321390000'
+			'390321390000' | true   || '0321390000'
+			'390456685687' | false  || '+390456685687'
+			'390456685687' | true   || '0456685687'
+			'390644250892' | false  || '+390644250892'
+			'390644250892' | true   || '0644250892'
+			'390731288021' | false  || '+390731288021'
+			'390731288021' | true   || '0731288021'
+			'393271117978' | false  || '+393271117978'
+			'393271117978' | true   || '3271117978'
+			'393271664564' | false  || '+393271664564'
+			'393271664564' | true   || '3271664564'
+			'393275630643' | false  || '+393275630643'
+			'393275630643' | true   || '3275630643'
+			'393278285623' | false  || '+393278285623'
+			'393278285623' | true   || '3278285623'
+			'393279353934' | false  || '+393279353934'
+			'393279353934' | true   || '3279353934'
+			'393280199824' | false  || '+393280199824'
+			'393280199824' | true   || '3280199824'
+			'393280261031' | false  || '+393280261031'
+			'393280261031' | true   || '3280261031'
+			'393287959189' | false  || '+393287959189'
+			'393287959189' | true   || '3287959189'
+			'393293683069' | false  || '+393293683069'
+			'393293683069' | true   || '3293683069'
+			'393299819613' | false  || '+393299819613'
+			'393299819613' | true   || '3299819613'
+			'393311414892' | false  || '+393311414892'
+			'393311414892' | true   || '3311414892'
+			'393313789913' | false  || '+393313789913'
+			'393313789913' | true   || '3313789913'
+			'393317180659' | false  || '+393317180659'
+			'393317180659' | true   || '3317180659'
+			'393351212978' | false  || '+393351212978'
+			'393351212978' | true   || '3351212978'
+			'393355265729' | false  || '+393355265729'
+			'393355265729' | true   || '3355265729'
+			'393356504585' | false  || '+393356504585'
+			'393356504585' | true   || '3356504585'
+			'393389928015' | false  || '+393389928015'
+			'393389928015' | true   || '3389928015'
+			'393393928145' | false  || '+393393928145'
+			'393393928145' | true   || '3393928145'
+			'393396106293' | false  || '+393396106293'
+			'393396106293' | true   || '3396106293'
+			'393458252479' | false  || '+393458252479'
+			'393458252479' | true   || '3458252479'
+			'393494558254' | false  || '+393494558254'
+			'393494558254' | true   || '3494558254'
+			'393495658855' | false  || '+393495658855'
+			'393495658855' | true   || '3495658855'
+			'393498157049' | false  || '+393498157049'
+			'393498157049' | true   || '3498157049'
+			'393498384701' | false  || '+393498384701'
+			'393498384701' | true   || '3498384701'
+			'393511451694' | false  || '+393511451694'
+			'393511451694' | true   || '3511451694'
+			'393514450234' | false  || '+393514450234'
+			'393514450234' | true   || '3514450234'
+			'393516279498' | false  || '+393516279498'
+			'393516279498' | true   || '3516279498'
+			'393517169292' | false  || '+393517169292'
+			'393517169292' | true   || '3517169292'
+			'393534219863' | false  || '+393534219863'
+			'393534219863' | true   || '3534219863'
+			'393665995033' | false  || '+393665995033'
+			'393665995033' | true   || '3665995033'
+			'393668954639' | false  || '+393668954639'
+			'393668954639' | true   || '3668954639'
+			'393711135735' | false  || '+393711135735'
+			'393711135735' | true   || '3711135735'
+			'393762620180' | false  || '+393762620180'
+			'393762620180' | true   || '3762620180'
+			'393784062451' | false  || '+393784062451'
+			'393784062451' | true   || '3784062451'
+			'393802421570' | false  || '+393802421570'
+			'393802421570' | true   || '3802421570'
+			'393886588384' | false  || '+393886588384'
+			'393886588384' | true   || '3886588384'
+			'393937762611' | false  || '+393937762611'
+			'393937762611' | true   || '3937762611'
+	}
+
+	def "Should store the local representation of the phone number removing the i18n prefix"() {
+		expect:
+			expected == new ItalianPhoneNumber(phone).toString(local)
+		where:
+			phone         | local || expected
+			'39312312345' | true  || '39312312345'
+			'39312312345' | false || '+3939312312345'
+			'39 02 8193'  | true  || '028193'
+			'39 02 8193'  | false || '+39028193'
 	}
 
 }

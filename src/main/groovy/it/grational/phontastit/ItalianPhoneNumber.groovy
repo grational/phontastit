@@ -1,5 +1,6 @@
 package it.grational.phontastit
 
+import java.util.regex.Pattern
 import groovy.transform.EqualsAndHashCode
 
 /**
@@ -9,10 +10,21 @@ import groovy.transform.EqualsAndHashCode
  * @author grational
  * @date 30-08-2018 20.34
  */
-@EqualsAndHashCode(includeFields = true, includes='phone')
+@EqualsAndHashCode (
+	includeFields = true,
+	includes='phone'
+)
 class ItalianPhoneNumber {
+	private final String  input
 	private final String  phone
 	private final Boolean fax
+	private final String  itPrefix = '+39'
+	private final String  it18n    = /((00|\+)39)|(39(?!\d{7,9}$))/
+	private final String  landline = /0\d{5,10}/
+	private final String  mobile   = /(3[1-9]\d)\d{6,8}/
+	private final String  tollfree = /80[03]\d+/
+	private final String  premium  = /(178|199|840|848|892|893|894|895|899)\d+/
+	private final Pattern valid    = ~/^(${it18n})?((${landline})|(${mobile})|(${tollfree})|(${premium}))$/
 
 	/**
 	 * Primary constructor
@@ -24,8 +36,21 @@ class ItalianPhoneNumber {
 		String ph,
 		Boolean fx = false
 	) {
-		this.phone = ph?.replaceAll(/\s+/,'') ?: { throw new IllegalArgumentException("Empty or null phone number") }()
+		phone = sanitize(ph)
+		phone = (phone ==~ valid) ? localize(phone) : {
+			throw new IllegalArgumentException (
+				"Cannot determine the phone number type of '${ph}'"
+			)
+		}()
 		this.fax = fx
+	}
+
+	private String sanitize(String input) {
+		input?.replaceAll(/[^+0-9]/,'')
+	}
+
+	private String localize(String input) {
+		input?.replaceFirst(/^${it18n}/,'')
 	}
 
 	/**
@@ -47,34 +72,30 @@ class ItalianPhoneNumber {
 	 */
 	private PhoneNumberType heuristic(String phone) {
 		PhoneNumberType type
-		switch(localPhoneNumber(phone)) {
-			case ~/^0\d{5,10}$/:
+		switch(phone) {
+			case ~/^${landline}$/:
 				type = PhoneNumberType.LANDLINE
 				break
-			case ~/^3[1-9]\d\d{6,8}$/:
+			case ~/^${mobile}$/:
 				type = PhoneNumberType.MOBILE
 				break
-			case ~/^80[03]\d+$/:
+			case ~/^${tollfree}$/:
 				type = PhoneNumberType.TOLLFREE
 				break
-			case ~/^(178|199|840|848|892|893|894|895|899)\d+$/:
+			case ~/^${premium}$/:
 				type = PhoneNumberType.PREMIUM
 				break
 			default:
-				throw new IllegalStateException("Cannot determine the number '${phone}' correctly" as String)
+				throw new IllegalStateException (
+					"This should never happen: cannot determine the phone number type of '${phone}'"
+				)
 		}
 		return type
 	}
 
-	private localPhoneNumber(String phone) {
-		return phone.replaceFirst(/^(?:00|\+)39/,'')
-	}
-
 	@Override
 	String toString(boolean local = true) {
-		local
-			? this.localPhoneNumber(this.phone)
-			: this.phone
+		return "${local ? '' : itPrefix}${this.phone}"
 	}
 
 }
