@@ -193,6 +193,9 @@ class ItalianPhoneNumberUSpec extends Specification {
 			'39312312345' | false || '+3939312312345'
 			'39 02 8193'  | true  || '028193'
 			'39 02 8193'  | false || '+39028193'
+			// case from the powerlisting report
+			'3383929399'  | true  || '3383929399'
+			'3383929399'  | false || '+393383929399'
 	}
 
 }

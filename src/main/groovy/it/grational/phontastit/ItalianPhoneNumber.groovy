@@ -50,7 +50,7 @@ class ItalianPhoneNumber {
 	}
 
 	private String localize(String input) {
-		input?.replaceFirst(/^${it18n}/,'')
+		input?.replaceFirst(/^(${it18n})/,'')
 	}
 
 	/**
