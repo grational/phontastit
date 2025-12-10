@@ -10,9 +10,6 @@
   <a href="https://jitpack.io/#grational/phontastit">
     <img src="https://jitpack.io/v/grational/phontastit.svg" alt="JitPack Release">
   </a>
-  <a href="https://github.com/grational/phontastit/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/grational/phontastit/gradle.yml?branch=master" alt="Build Status">
-  </a>
   <img src="https://img.shields.io/badge/Java-21+-orange" alt="Java 21+">
   <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License">
 </p>
