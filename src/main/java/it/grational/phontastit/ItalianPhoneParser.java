@@ -19,7 +19,7 @@ public class ItalianPhoneParser {
 	 * The actual validation is delegated to ItalianPhoneNumber class
 	 */
 	private static final Pattern PHONE_PATTERN = Pattern.compile (
-		"(?:(?:\\+|00)?39[\\s\\-.()]?)?[0-9](?:[\\s\\-.()]{0,2}[0-9]){5,14}"
+		"(?:(?:\\+|00)?39[\\s\\-.()]?)?[0-9](?:[\\s\\-./()]{0,2}[0-9]){5,14}"
 	);
 	
 	/**
@@ -40,16 +40,10 @@ public class ItalianPhoneParser {
 		while (matcher.find()) {
 			String candidate = matcher.group().trim();
 			try {
-				// Try to create an ItalianPhoneNumber object
-				// If it's valid, it will be added to the list
-				// ItalianPhoneNumber constructor handles sanitization and validation
 				phoneNumbers.add (
 					new ItalianPhoneNumber(candidate)
 				);
-			} catch (IllegalArgumentException e) {
-				// Invalid phone number, skip it
-				// This handles edge cases where the regex matches but ItalianPhoneNumber validation fails
-			}
+			} catch (IllegalArgumentException e) {}
 		}
 		return new ArrayList<>(phoneNumbers);
 	} // }}}

@@ -15,10 +15,13 @@ public class ItalianPhoneNumber {
 
 	private static final String IT_PREFIX = "+39";
 	private static final String IT_18N = "((00|\\+)39)|(39(?!\\d{7,9}$))";
-	private static final String LANDLINE = "0\\d{5,10}";
-	private static final String MOBILE = "(3[1-9]\\d)\\d{6,8}";
-	private static final String TOLLFREE = "80[03]\\d+";
-	private static final String PREMIUM = "(178|199|840|848|892|893|894|895|899)\\d+";
+	private static final String LANDLINE = "0[1-9]\\d{4,9}";
+	private static final String MOBILE = "(3[1-9]\\d)\\d{6,9}";
+	private static final String TOLLFREE = "(?:800\\d{6})|(?:803\\d{3})";
+	private static final String PREMIUM = String.join("|",
+		"(?:892(?:\\d{3}|\\d{6}))", // Caso specifico 892 (6 o 9 cifre tot)
+		"(?:(178|199|840|848|893|894|895|899)\\d{6})" // Altri casi (9 cifre tot)
+	);
 	
 	// Combined regex pattern
 	private static final Pattern VALID_PATTERN = Pattern.compile (

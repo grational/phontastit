@@ -15,17 +15,12 @@ class ItalianPhoneParserUSpec extends Specification {
 		expect:
 			parser.parse(text).isEmpty()
 		where:
-			text << [null, '', '   ']
-	} // }}}
-
-	def "Should return an empty list when the text contains no phone numbers"() { // {{{
-		given:
-			def parser = new ItalianPhoneParser()
-			def text = "This is just some text without any phone numbers"
-		when:
-			List result = parser.parse(text)
-		then:
-			result.isEmpty()
+			text << [
+				null,
+				'',
+				'   ',
+				"This is just some text without any phone numbers"
+			]
 	} // }}}
 
 	def "Should find a single mobile phone number in text"() { // {{{
@@ -43,7 +38,7 @@ class ItalianPhoneParserUSpec extends Specification {
 	def "Should find a single landline phone number in text"() { // {{{
 		given:
 			def parser = new ItalianPhoneParser()
-			def text = "Our office number is 02 8193736"
+			def text = "Our office number is 02 81.93.736"
 		when:
 			def result = parser.parse(text)
 		then:
@@ -55,7 +50,7 @@ class ItalianPhoneParserUSpec extends Specification {
 	def "Should find phone numbers with international prefix"() { // {{{
 		given:
 			def parser = new ItalianPhoneParser()
-			def text = "Contact us at +39 335 5856641 or +39 02 8193736"
+			def text = "Contact us at +39 335 5856641 or +39 02-81.93.736"
 		when:
 			def result = parser.parse(text)
 		then:
@@ -70,7 +65,7 @@ class ItalianPhoneParserUSpec extends Specification {
 		given:
 			def parser = new ItalianPhoneParser()
 			def text = """
-				For support call our toll free number 800 200227.
+				For support call our toll free number 800 200 227.
 				For sales contact 335 5856641 or our office at 011 8193736.
 				Premium line available at 899 200227.
 			"""
@@ -87,20 +82,21 @@ class ItalianPhoneParserUSpec extends Specification {
 	def "Should find phone numbers with various formatting"() { // {{{
 		given:
 			def parser = new ItalianPhoneParser()
-			def text = "Call 348-901-8484 or (335) 5856641 or 02.8193736"
+			def text = "Call 348-901-8484 or (335) 5856641 or 02.8193736 or 800/200227"
 		when:
 			def result = parser.parse(text)
 		then:
-			result.size() == 3
+			result.size() == 4
 			result[0].toString() == '3489018484'
 			result[1].toString() == '3355856641'
 			result[2].toString() == '028193736'
+			result[3].toString() == '800200227'
 	} // }}}
 
 	def "Should handle phone numbers with 0039 prefix"() { // {{{
 		given:
 			def parser = new ItalianPhoneParser()
-			def text = "International format: 0039 335 5856641 and 0039 02 8193736"
+			def text = "International format: 0039 335/5856641 and 0039 02-81.93.736"
 		when:
 			def result = parser.parse(text)
 		then:
@@ -116,9 +112,8 @@ class ItalianPhoneParserUSpec extends Specification {
 		when:
 			def result = parser.parse(text)
 		then:
-			result.size() == 2
+			result.size() == 1
 			result[0].toString() == '3355856641'
-			result[1].toString() == '3355856641'
 	} // }}}
 
 	def "Should find phone numbers at the beginning and end of text"() { // {{{
