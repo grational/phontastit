@@ -10,7 +10,7 @@ import java.text.ParseException
  */
 class ItalianPhoneNumberUSpec extends Specification {
 
-	def "Should raise an IllegalArgumentException if one of the parameters is invalid"() {
+	def "Should raise an IllegalArgumentException if one of the parameters is invalid"() { // {{{
 		when:
 			new ItalianPhoneNumber(phone, fax).type()
 		then:
@@ -26,10 +26,10 @@ class ItalianPhoneNumberUSpec extends Specification {
 			''                | true
 			"+39 11 12345678" | false
 			"+ull"            | false
-	}
+	} // }}}
 
 	@Unroll
-	def "Should always return the correct number type"() {
+	def "Should always return the correct number type"() { // {{{
 		expect:
 			expected == new ItalianPhoneNumber(phone, fax).type()
 		where:
@@ -56,9 +56,9 @@ class ItalianPhoneNumberUSpec extends Specification {
 			'33124165852'      | false || PhoneNumberType.MOBILE
 			// case from https://aziende.virgilio.it/amministrazioni-immobiliari/chieri-to/amministratoregestioneimmobili_cibiib
 			'373 7915844'      | false || PhoneNumberType.MOBILE
-	}
+	} // }}}
 
-	def "Should return the correct string phone representation"() {
+	def "Should return the correct string phone representation"() { // {{{
 		expect:
 			expected == new ItalianPhoneNumber(phone).toString(local)
 		where:
@@ -87,9 +87,9 @@ class ItalianPhoneNumberUSpec extends Specification {
 			// longest  MOBILE
 			'33124165852'      | false || '+3933124165852'
 			'33124165852'      | true  || '33124165852'
-	}
+	} // }}}
 
-	def "Should accept phone numbers with incomplete i18n prefix"() {
+	def "Should accept phone numbers with incomplete i18n prefix"() { // {{{
 		expect:
 			expected == new ItalianPhoneNumber(phone).toString(local)
 		where:
@@ -182,9 +182,9 @@ class ItalianPhoneNumberUSpec extends Specification {
 			'393886588384' | true   || '3886588384'
 			'393937762611' | false  || '+393937762611'
 			'393937762611' | true   || '3937762611'
-	}
+	} // }}}
 
-	def "Should store the local representation of the phone number removing the i18n prefix"() {
+	def "Should store the local representation of the phone number removing the i18n prefix"() { // {{{
 		expect:
 			expected == new ItalianPhoneNumber(phone).toString(local)
 		where:
@@ -196,6 +196,7 @@ class ItalianPhoneNumberUSpec extends Specification {
 			// case from the powerlisting report
 			'3383929399'  | true  || '3383929399'
 			'3383929399'  | false || '+393383929399'
-	}
+	} // }}}
 
 }
+// vim: fdm=marker

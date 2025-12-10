@@ -47,12 +47,12 @@ repositories {
 dependencies {
 	// Groovy language support
 	implementation (
-		"${groovyGroupId}:groovy:${groovyVersion}",
 		'org.slf4j:slf4j-api:2.0.17'
 	)
 
 	// We use the awesome Spock testing and specification framework
 	testImplementation (
+		"${groovyGroupId}:groovy:${groovyVersion}",
 		"org.spockframework:spock-core:2.3-groovy-4.0",
 		"org.junit.platform:junit-platform-launcher"
 	)
