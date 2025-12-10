@@ -190,5 +190,30 @@ class ItalianPhoneParserUSpec extends Specification {
 			result[1].toString() == '3271117978'
 	} // }}}
 
+	def "Should correctly handle a series of edge cases from the report"() { // {{{
+		given:
+			def parser = new ItalianPhoneParser()
+			def text = """
+				Numbers from the powerlisting report
+				00000000000;0558954159
+				0000000000;0464519688
+				00158170670;086166404
+				000000000;0362284445
+				000000000;3206393915
+				00140840406;05411836580
+				00140840406;0541974135
+				000000000;3299420528
+				000000000;3342929395
+				000000000;3920544313;0331724600
+				000000000;0456304777;3295304376
+				000000000;029747004
+				000000000;0250043638;3473062946
+				000000000;08119723547;08119723546;0815922409
+			"""
+		when:
+			def result = parser.parse(text)
+		then:
+			result.size() == 19
+	} // }}}
 }
 // vim: fdm=marker
