@@ -11,12 +11,16 @@ import java.util.regex.Pattern;
  * This class can scan through text and identify all valid Italian phone numbers
  * @author grational
  */
-public class ItalianPhoneParser {
+public class Parser {
+
+	private Parser() {
+		// Utility class
+	}
 
 	/**
 	 * Pattern to match potential Italian phone numbers in text
 	 * Matches sequences that could be phone numbers with various separators
-	 * The actual validation is delegated to ItalianPhoneNumber class
+	 * The actual validation is delegated to Phone class
 	 */
 	private static final Pattern PHONE_PATTERN = Pattern.compile (
 		"(?:(?:\\+|00)?39[\\s\\-.()]?)?[0-9](?:[\\s\\-./()]{0,2}[0-9]){5,14}"
@@ -26,14 +30,14 @@ public class ItalianPhoneParser {
 	 * Parse text and extract all valid Italian phone numbers
 	 *
 	 * @param text  the text to parse for phone numbers
-	 * @return List<ItalianPhoneNumber>  a list of all valid Italian phone numbers found
+	 * @return List<Phone>  a list of all valid Italian phone numbers found
 	 */
-	public List<ItalianPhoneNumber> parse(String text) { // {{{
+	public static List<Phone> parse(String text) { // {{{ 
 		if (text == null || text.trim().isEmpty()) {
 			return Collections.emptyList();
 		}
 
-		Set<ItalianPhoneNumber> phoneNumbers = new LinkedHashSet<>();
+		Set<Phone> phoneNumbers = new LinkedHashSet<>();
 
 		Matcher matcher = PHONE_PATTERN.matcher(text);
 
@@ -41,12 +45,12 @@ public class ItalianPhoneParser {
 			String candidate = matcher.group().trim();
 			try {
 				phoneNumbers.add (
-					new ItalianPhoneNumber(candidate)
+					new Phone(candidate)
 				);
 			} catch (IllegalArgumentException e) {}
 		}
-		return new ArrayList<>(phoneNumbers);
-	} // }}}
+		return new ArrayList<>(phoneNumbers); 
+	} // }}} 
 
 }
 // vim: fdm=marker

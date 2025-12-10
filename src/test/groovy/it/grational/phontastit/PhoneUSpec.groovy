@@ -8,11 +8,11 @@ import java.text.ParseException
  * @author d7392
  * @date 30-08-2018 20.34
  */
-class ItalianPhoneNumberUSpec extends Specification {
+class PhoneUSpec extends Specification {
 
 	def "Should raise an IllegalArgumentException if one of the parameters is invalid"() { // {{{
 		when:
-			new ItalianPhoneNumber(phone, fax).type()
+			new Phone(phone, fax).type()
 		then:
 			def exception = thrown(IllegalArgumentException)
 			exception.message == "Cannot determine the phone number type of '${phone}'"
@@ -31,36 +31,36 @@ class ItalianPhoneNumberUSpec extends Specification {
 	@Unroll
 	def "Should always return the correct number type"() { // {{{
 		expect:
-			expected == new ItalianPhoneNumber(phone, fax).type()
+			expected == new Phone(phone, fax).type()
 		where:
 			phone              | fax   || expected
-			'0039 800 200227'  | false || PhoneNumberType.TOLLFREE
-			'+39 800 200227'   | false || PhoneNumberType.TOLLFREE
-			'0039 899 200227'  | false || PhoneNumberType.PREMIUM
-			'+39 893 200227'   | false || PhoneNumberType.PREMIUM
-			'+39 348 9018484'  | false || PhoneNumberType.MOBILE
-			'0039 335 5856641' | false || PhoneNumberType.MOBILE
-			'0039 02 8193736'  | false || PhoneNumberType.LANDLINE
-			'+39 011 8193736'  | false || PhoneNumberType.LANDLINE
-			'+39 011 8193736'  | true  || PhoneNumberType.FAX
-			'0039 011 8193736' | true  || PhoneNumberType.FAX
+			'0039 800 200227'  | false || Type.TOLLFREE
+			'+39 800 200227'   | false || Type.TOLLFREE
+			'0039 899 200227'  | false || Type.PREMIUM
+			'+39 893 200227'   | false || Type.PREMIUM
+			'+39 348 9018484'  | false || Type.MOBILE
+			'0039 335 5856641' | false || Type.MOBILE
+			'0039 02 8193736'  | false || Type.LANDLINE
+			'+39 011 8193736'  | false || Type.LANDLINE
+			'+39 011 8193736'  | true  || Type.FAX
+			'0039 011 8193736' | true  || Type.FAX
 			// test case from https://jira.italiaonline.it/browse/COL-1739
-			'02989442'         | false || PhoneNumberType.LANDLINE
+			'02989442'         | false || Type.LANDLINE
 			// shortest LANDLINE
-			'022881'           | false || PhoneNumberType.LANDLINE
+			'022881'           | false || Type.LANDLINE
 			// longest  LANDLINE
-			'09977933544'      | false || PhoneNumberType.LANDLINE
+			'09977933544'      | false || Type.LANDLINE
 			// shortest MOBILE
-			'324611069'        | false || PhoneNumberType.MOBILE
+			'324611069'        | false || Type.MOBILE
 			// longest  MOBILE
-			'33124165852'      | false || PhoneNumberType.MOBILE
+			'33124165852'      | false || Type.MOBILE
 			// case from https://aziende.virgilio.it/amministrazioni-immobiliari/chieri-to/amministratoregestioneimmobili_cibiib
-			'373 7915844'      | false || PhoneNumberType.MOBILE
+			'373 7915844'      | false || Type.MOBILE
 	} // }}}
 
 	def "Should return the correct string phone representation"() { // {{{
 		expect:
-			expected == new ItalianPhoneNumber(phone).toString(local)
+			expected == new Phone(phone).toString(local)
 		where:
 			phone              | local || expected
 			'0039 800 200227'  | false || '+39800200227'
@@ -91,7 +91,7 @@ class ItalianPhoneNumberUSpec extends Specification {
 
 	def "Should accept phone numbers with incomplete i18n prefix"() { // {{{
 		expect:
-			expected == new ItalianPhoneNumber(phone).toString(local)
+			expected == new Phone(phone).toString(local)
 		where:
 			phone          | local  || expected
 			'390105957333' | false  || '+390105957333'
@@ -186,7 +186,7 @@ class ItalianPhoneNumberUSpec extends Specification {
 
 	def "Should store the local representation of the phone number removing the i18n prefix"() { // {{{
 		expect:
-			expected == new ItalianPhoneNumber(phone).toString(local)
+			expected == new Phone(phone).toString(local)
 		where:
 			phone         | local || expected
 			'39312312345' | true  || '39312312345'

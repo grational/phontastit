@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @author grational
  * @date 30-08-2018 20.34
  */
-public class ItalianPhoneNumber {
+public class Phone {
 	private final String phone;
 	private final boolean fax;
 
@@ -38,7 +38,7 @@ public class ItalianPhoneNumber {
 	 *
 	 * @param ph  the Italian phone number to be represented by the object
 	 */
-	public ItalianPhoneNumber(String ph) {
+	public Phone(String ph) {
 		this(ph, false);
 	}
 
@@ -48,7 +48,7 @@ public class ItalianPhoneNumber {
 	 * @param ph  the Italian phone number to be represented by the object
 	 * @param fx  a boolean flag to force the type to FAX
 	 */
-	public ItalianPhoneNumber(String ph, Boolean fx) {
+	public Phone(String ph, Boolean fx) {
 		String sanitized = sanitize(ph);
 		if (VALID_PATTERN.matcher(sanitized).matches()) {
 			this.phone = localize(sanitized);
@@ -81,25 +81,25 @@ public class ItalianPhoneNumber {
 	 * Since the FAX phone type is not recognizable the external boolean
 	 * parameter fax is used to force this type
 	 *
-	 * @return PhoneNumberType  return an enum PhoneNumberType indicating the possible types
+	 * @return Type  return an enum Type indicating the possible types
 	 */
-	public PhoneNumberType type() {
-		return this.fax ? PhoneNumberType.FAX : heuristic(this.phone);
+	public Type type() {
+		return this.fax ? Type.FAX : heuristic(this.phone);
 	}
 
 	/**
 	 * This method decides according to the starting digits of
 	 * an Italian Phone Number without the i18n IT prefix
 	 */
-	private PhoneNumberType heuristic(String phone) {
+	private Type heuristic(String phone) {
 		if (LANDLINE_PATTERN.matcher(phone).matches()) {
-			return PhoneNumberType.LANDLINE;
+			return Type.LANDLINE;
 		} else if (MOBILE_PATTERN.matcher(phone).matches()) {
-			return PhoneNumberType.MOBILE;
+			return Type.MOBILE;
 		} else if (TOLLFREE_PATTERN.matcher(phone).matches()) {
-			return PhoneNumberType.TOLLFREE;
+			return Type.TOLLFREE;
 		} else if (PREMIUM_PATTERN.matcher(phone).matches()) {
-			return PhoneNumberType.PREMIUM;
+			return Type.PREMIUM;
 		} else {
 			throw new IllegalStateException (
 				String.format (
@@ -123,7 +123,7 @@ public class ItalianPhoneNumber {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		ItalianPhoneNumber that = (ItalianPhoneNumber) o;
+		Phone that = (Phone) o;
 		return fax == that.fax && Objects.equals(phone, that.phone);
 	}
 

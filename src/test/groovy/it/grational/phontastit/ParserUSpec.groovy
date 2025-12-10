@@ -3,17 +3,15 @@ package it.grational.phontastit
 import spock.lang.*
 
 /**
- * Unit tests for ItalianPhoneParser
+ * Unit tests for Parser
  * Testing the ability to extract Italian phone numbers from text
  * @author grational
  */
-class ItalianPhoneParserUSpec extends Specification {
+class ParserUSpec extends Specification {
 
 	def "Should return an empty list when the text is null or empty"() { // {{{
-		given:
-			def parser = new ItalianPhoneParser()
 		expect:
-			parser.parse(text).isEmpty()
+			Parser.parse(text).isEmpty()
 		where:
 			text << [
 				null,
@@ -25,66 +23,61 @@ class ItalianPhoneParserUSpec extends Specification {
 
 	def "Should find a single mobile phone number in text"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "Call me at 348 9018484 for more info"
 		when:
-			List result = parser.parse(text)
+			List result = Parser.parse(text)
 		then:
 			result.size() == 1
-			result[0].type() == PhoneNumberType.MOBILE
+			result[0].type() == Type.MOBILE
 			result[0].toString() == '3489018484'
 	} // }}}
 
 	def "Should find a single landline phone number in text"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "Our office number is 02 81.93.736"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 1
-			result[0].type() == PhoneNumberType.LANDLINE
+			result[0].type() == Type.LANDLINE
 			result[0].toString() == '028193736'
 	} // }}}
 
 	def "Should find phone numbers with international prefix"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "Contact us at +39 335 5856641 or +39 02-81.93.736"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 2
-			result[0].type() == PhoneNumberType.MOBILE
+			result[0].type() == Type.MOBILE
 			result[0].toString() == '3355856641'
-			result[1].type() == PhoneNumberType.LANDLINE
+			result[1].type() == Type.LANDLINE
 			result[1].toString() == '028193736'
 	} // }}}
 
 	def "Should find multiple phone numbers of different types in text"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = """
 				For support call our toll free number 800 200 227.
 				For sales contact 335 5856641 or our office at 011 8193736.
 				Premium line available at 899 200227.
 			"""
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 4
-			result[0].type() == PhoneNumberType.TOLLFREE
-			result[1].type() == PhoneNumberType.MOBILE
-			result[2].type() == PhoneNumberType.LANDLINE
-			result[3].type() == PhoneNumberType.PREMIUM
+			result[0].type() == Type.TOLLFREE
+			result[1].type() == Type.MOBILE
+			result[2].type() == Type.LANDLINE
+			result[3].type() == Type.PREMIUM
 	} // }}}
 
 	def "Should find phone numbers with various formatting"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "Call 348-901-8484 or (335) 5856641 or 02.8193736 or 800/200227"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 4
 			result[0].toString() == '3489018484'
@@ -95,22 +88,20 @@ class ItalianPhoneParserUSpec extends Specification {
 
 	def "Should handle phone numbers with 0039 prefix"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "International format: 0039 335/5856641 and 0039 02-81.93.736"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 2
-			result[0].type() == PhoneNumberType.MOBILE
-			result[1].type() == PhoneNumberType.LANDLINE
+			result[0].type() == Type.MOBILE
+			result[1].type() == Type.LANDLINE
 	} // }}}
 
 	def "Should not duplicate phone numbers that appear multiple times"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "Call 335 5856641. Yes, please call 335 5856641 today!"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 1
 			result[0].toString() == '3355856641'
@@ -118,10 +109,9 @@ class ItalianPhoneParserUSpec extends Specification {
 
 	def "Should find phone numbers at the beginning and end of text"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "3355856641 is my mobile, office is 028193736"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 2
 			result[0].toString() == '3355856641'
@@ -130,22 +120,20 @@ class ItalianPhoneParserUSpec extends Specification {
 
 	def "Should find phone numbers separated by various delimiters"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "Numbers: 3355856641, 028193736; 800200227 - 899200227"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 4
 	} // }}}
 
 	def "Should handle edge cases with shortest and longest valid numbers"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			// shortest LANDLINE: 022881, longest LANDLINE: 09977933544
 			// shortest MOBILE: 324611069, longest MOBILE: 33124165852
 			def text = "Short: 022881 and 324611069. Long: 09977933544 and 33124165852"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 4
 			result[0].toString() == '022881'
@@ -156,34 +144,31 @@ class ItalianPhoneParserUSpec extends Specification {
 
 	def "Should not match invalid sequences that look like phone numbers"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "My PIN is 12345678 and year 2023 and code 999888777"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.isEmpty()
 	} // }}}
 
 	def "Should find phone numbers in multi-line text"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = """
 				Customer Service
 				Phone: +39 335 5856641
 				Fax: 02 8193736
 			"""
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 2
 	} // }}}
 
 	def "Should handle incomplete international prefix (39 only)"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = "Numbers from database: 390239435196 and 393271117978"
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 2
 			result[0].toString() == '0239435196'
@@ -192,7 +177,6 @@ class ItalianPhoneParserUSpec extends Specification {
 
 	def "Should correctly handle a series of edge cases from the report"() { // {{{
 		given:
-			def parser = new ItalianPhoneParser()
 			def text = """
 				Numbers from the powerlisting report
 				00000000000;0558954159
@@ -211,7 +195,7 @@ class ItalianPhoneParserUSpec extends Specification {
 				000000000;08119723547;08119723546;0815922409
 			"""
 		when:
-			def result = parser.parse(text)
+			def result = Parser.parse(text)
 		then:
 			result.size() == 19
 	} // }}}

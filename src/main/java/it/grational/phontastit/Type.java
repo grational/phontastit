@@ -3,7 +3,7 @@ package it.grational.phontastit;
 /**
  * Possible types of phone numbers
  */
-public enum PhoneNumberType {
+public enum Type {
     /** Traditional house phone numbers */
     LANDLINE,
     /** Mobile/cell phone numbers */
