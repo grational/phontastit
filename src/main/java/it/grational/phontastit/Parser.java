@@ -1,4 +1,5 @@
 package it.grational.phontastit;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -6,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /**
  * Parser for extracting Italian phone numbers from text
  * This class can scan through text and identify all valid Italian phone numbers
@@ -13,9 +15,7 @@ import java.util.regex.Pattern;
  */
 public class Parser {
 
-	private Parser() {
-		// Utility class
-	}
+	private Parser() {}
 
 	/**
 	 * Pattern to match potential Italian phone numbers in text
@@ -32,7 +32,7 @@ public class Parser {
 	 * @param text  the text to parse for phone numbers
 	 * @return List<Phone>  a list of all valid Italian phone numbers found
 	 */
-	public static List<Phone> parse(String text) { // {{{ 
+	public static List<Phone> parse(String text) { // {{{
 		if (text == null || text.trim().isEmpty()) {
 			return Collections.emptyList();
 		}
@@ -49,8 +49,8 @@ public class Parser {
 				);
 			} catch (IllegalArgumentException e) {}
 		}
-		return new ArrayList<>(phoneNumbers); 
-	} // }}} 
+		return new ArrayList<>(phoneNumbers);
+	} // }}}
 
 }
 // vim: fdm=marker

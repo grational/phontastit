@@ -20,7 +20,8 @@ public class Phone {
 	private static final String TOLLFREE = "(?:800\\d{6})|(?:803\\d{3})";
 	private static final String PREMIUM = String.join("|",
 		"(?:892(?:\\d{3}|\\d{6}))", // Caso specifico 892 (6 o 9 cifre tot)
-		"(?:(178|199|840|848|893|894|895|899)\\d{6})" // Altri casi (9 cifre tot)
+		"(?:(199|840|848|893|894|895|899)\\d{6})", // Altri casi (9 cifre tot)
+		"(?:(178)\\d{6,7})" // Altri casi (9 cifre tot)
 	);
 	
 	// Combined regex pattern

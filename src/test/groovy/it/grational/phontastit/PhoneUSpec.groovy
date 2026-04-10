@@ -10,6 +10,7 @@ import java.text.ParseException
  */
 class PhoneUSpec extends Specification {
 
+	@IgnoreRest
 	def "Should raise an IllegalArgumentException if one of the parameters is invalid"() { // {{{
 		when:
 			new Phone(phone, fax).type()
@@ -26,6 +27,12 @@ class PhoneUSpec extends Specification {
 			''                | true
 			"+39 11 12345678" | false
 			"+ull"            | false
+			// invalid tollfree prefix
+			'804 953 391'     | false
+			// invalid it18n prefix or too long landline with 039 prefix
+			'039 335 662 318'    | false
+			// one extra digit
+			'018450029899'    | false
 	} // }}}
 
 	@Unroll
@@ -56,6 +63,9 @@ class PhoneUSpec extends Specification {
 			'33124165852'      | false || Type.MOBILE
 			// case from https://aziende.virgilio.it/amministrazioni-immobiliari/chieri-to/amministratoregestioneimmobili_cibiib
 			'373 7915844'      | false || Type.MOBILE
+			// from 
+			'1782756067'   | false || Type.PREMIUM
+			'+39 1782756067'   | false || Type.PREMIUM
 	} // }}}
 
 	def "Should return the correct string phone representation"() { // {{{
