@@ -60,30 +60,47 @@ class ParserUSpec extends Specification {
 		given:
 			def text = """
 				For support call our toll free number 800 200 227.
+				Shared cost line: 840 123456.
 				For sales contact 335 5856641 or our office at 011 8193736.
 				Premium line available at 899 200227.
 			"""
 		when:
 			def result = Parser.parse(text)
 		then:
-			result.size() == 4
+			result.size() == 5
 			result[0].type() == Type.TOLLFREE
-			result[1].type() == Type.MOBILE
-			result[2].type() == Type.LANDLINE
-			result[3].type() == Type.PREMIUM
+			result[1].type() == Type.SHARED_COST
+			result[2].type() == Type.MOBILE
+			result[3].type() == Type.LANDLINE
+			result[4].type() == Type.PREMIUM
 	} // }}}
 
 	def "Should find phone numbers with various formatting"() { // {{{
 		given:
-			def text = "Call 348-901-8484 or (335) 5856641 or 02.8193736 or 800/200227"
+			def text = "Call 348-901-8484 or (335) 5856641 or 02.8193736 or 800/200227 or 848/123456"
 		when:
 			def result = Parser.parse(text)
 		then:
-			result.size() == 4
+			result.size() == 5
 			result[0].toString() == '3489018484'
 			result[1].toString() == '3355856641'
 			result[2].toString() == '028193736'
 			result[3].toString() == '800200227'
+			result[4].type() == Type.SHARED_COST
+	 } // }}}
+
+	def "Should classify shared-cost and premium service families according to the refined plan"() { // {{{
+		given:
+			def text = "Shared: 841 123, 847 123. Premium: 893 0123, 894 51234, 178 2756067"
+		when:
+			def result = Parser.parse(text)
+		then:
+			result.size() == 5
+			result[0].type() == Type.SHARED_COST
+			result[1].type() == Type.SHARED_COST
+			result[2].type() == Type.PREMIUM
+			result[3].type() == Type.PREMIUM
+			result[4].type() == Type.PREMIUM
 	} // }}}
 
 	def "Should handle phone numbers with 0039 prefix"() { // {{{
@@ -130,8 +147,8 @@ class ParserUSpec extends Specification {
 	def "Should handle edge cases with shortest and longest valid numbers"() { // {{{
 		given:
 			// shortest LANDLINE: 022881, longest LANDLINE: 09977933544
-			// shortest MOBILE: 324611069, longest MOBILE: 33124165852
-			def text = "Short: 022881 and 324611069. Long: 09977933544 and 33124165852"
+			// shortest MOBILE: 324611069, longest MOBILE: 3312416585
+			def text = "Short: 022881 and 324611069. Long: 09977933544 and 3312416585"
 		when:
 			def result = Parser.parse(text)
 		then:
@@ -139,7 +156,7 @@ class ParserUSpec extends Specification {
 			result[0].toString() == '022881'
 			result[1].toString() == '324611069'
 			result[2].toString() == '09977933544'
-			result[3].toString() == '33124165852'
+			result[3].toString() == '3312416585'
 	} // }}}
 
 	def "Should not match invalid sequences that look like phone numbers"() { // {{{

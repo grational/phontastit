@@ -10,6 +10,8 @@ public enum Type {
     MOBILE,
     /** A phone number for which the phone call is free */
     TOLLFREE,
+    /** A service number with cost shared between caller and recipient */
+    SHARED_COST,
     /** A service number, an extra fee is required for the phone call */
     PREMIUM,
     /** A phone number connected to a fax device */

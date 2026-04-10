@@ -9,7 +9,7 @@ Read the [Groovydoc API documentation](groovydoc/index.html).
 ## Features
 
 * **Parse** texts to find Italian phone numbers.
-* **Identify** the type of number (Landline, Mobile, Toll-free, Premium, etc.).
+* **Identify** the type of number (Landline, Mobile, Toll-free, Shared-cost, Premium, etc.).
 * **Zero dependencies** (standard Java library).
 
 ## Usage
@@ -66,5 +66,8 @@ The `Type` enum supports:
 * `LANDLINE` (e.g., 02..., 06...)
 * `MOBILE` (e.g., 348..., 335...)
 * `TOLLFREE` (800..., 803...)
-* `PREMIUM` (892..., 199...)
+* `SHARED_COST` (840..., 841..., 847..., 848...)
+* `PREMIUM` (892..., 893..., 894..., 895..., 899..., plus collapsed `178...` / `199...` unique-or-personal service ranges)
 * `FAX` (Requires manual flag)
+
+For API simplicity, officially distinct unique-or-personal ranges such as `178...` and `199...` are exposed as `PREMIUM`.

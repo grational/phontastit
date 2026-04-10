@@ -29,10 +29,16 @@ class PhoneUSpec extends Specification {
 			"+ull"            | false
 			// invalid tollfree prefix
 			'804 953 391'     | false
-			// invalid it18n prefix or too long landline with 039 prefix
-			'039 335 662 318'    | false
-			// one extra digit
-			'018450029899'    | false
+			// unsupported mobile prefix according to the prefix catalog
+			'321 1234567'     | false
+			// mobile numbers are limited to 9 or 10 digits
+			'33124165852'     | false
+			// shared-cost short code must use the official 841/847 structures
+			'+39 841 123456'  | false
+			// premium service families follow the published per-prefix structures
+			'+39 892 200227'  | false
+			'+39 894 200227'  | false
+			'+39 178 275606'  | false
 	} // }}}
 
 	@Unroll
@@ -43,12 +49,24 @@ class PhoneUSpec extends Specification {
 			phone              | fax   || expected
 			'0039 800 200227'  | false || Type.TOLLFREE
 			'+39 800 200227'   | false || Type.TOLLFREE
+			'+39 840 123456'   | false || Type.SHARED_COST
+			'+39 841 123'      | false || Type.SHARED_COST
+			'+39 847 123'      | false || Type.SHARED_COST
+			'+39 848 123456'   | false || Type.SHARED_COST
 			'0039 899 200227'  | false || Type.PREMIUM
-			'+39 893 200227'   | false || Type.PREMIUM
+			'+39 892 424'      | false || Type.PREMIUM
+			'+39 893 0123'     | false || Type.PREMIUM
+			'+39 894 51234'    | false || Type.PREMIUM
+			'+39 895 5123456'  | false || Type.PREMIUM
+			'+39 199 123456'   | false || Type.PREMIUM
 			'+39 348 9018484'  | false || Type.MOBILE
+			'+39 390 1234567'  | false || Type.MOBILE
+			'+39 391 1234567'  | false || Type.MOBILE
 			'0039 335 5856641' | false || Type.MOBILE
 			'0039 02 8193736'  | false || Type.LANDLINE
 			'+39 011 8193736'  | false || Type.LANDLINE
+			'039 335 662 318'  | false || Type.LANDLINE
+			'018450029899'     | false || Type.LANDLINE
 			'+39 011 8193736'  | true  || Type.FAX
 			'0039 011 8193736' | true  || Type.FAX
 			// test case from https://jira.italiaonline.it/browse/COL-1739
@@ -60,7 +78,7 @@ class PhoneUSpec extends Specification {
 			// shortest MOBILE
 			'324611069'        | false || Type.MOBILE
 			// longest  MOBILE
-			'33124165852'      | false || Type.MOBILE
+			'3312416585'       | false || Type.MOBILE
 			// case from https://aziende.virgilio.it/amministrazioni-immobiliari/chieri-to/amministratoregestioneimmobili_cibiib
 			'373 7915844'      | false || Type.MOBILE
 			// from 
@@ -77,12 +95,24 @@ class PhoneUSpec extends Specification {
 			'+39 800 200227'   | false || '+39800200227'
 			'0039 800 200227'  | true  || '800200227'
 			'0039 899 200227'  | true  || '899200227'
+			'+39 840 123456'   | true  || '840123456'
+			'+39 841 123'      | true  || '841123'
+			'+39 847 123'      | true  || '847123'
+			'+39 848 123456'   | true  || '848123456'
+			'+39 892 424'      | true  || '892424'
+			'+39 893 0123'     | true  || '8930123'
+			'+39 894 51234'    | true  || '89451234'
+			'+39 895 5123456'  | true  || '8955123456'
 			'+39 348 9018484'  | false || '+393489018484'
 			'+39 348 9018484'  | true  || '3489018484'
 			'0039 335 5856641' | false || '+393355856641'
 			'0039 335 5856641' | true  || '3355856641'
+			'+39 390 1234567'  | true  || '3901234567'
+			'+39 391 1234567'  | true  || '3911234567'
 			'+39 02 8193736'   | false || '+39028193736'
 			'0039 02 8193736'  | false || '+39028193736'
+			'039 335 662 318'  | true  || '039335662318'
+			'018450029899'     | true  || '018450029899'
 			'+39 011 8193736'  | true  || '0118193736'
 			'0039 011 8193736' | true  || '0118193736'
 			// shortest LANDLINE
@@ -95,8 +125,8 @@ class PhoneUSpec extends Specification {
 			'324611069'        | false || '+39324611069'
 			'324611069'        | true  || '324611069'
 			// longest  MOBILE
-			'33124165852'      | false || '+3933124165852'
-			'33124165852'      | true  || '33124165852'
+			'3312416585'       | false || '+393312416585'
+			'3312416585'       | true  || '3312416585'
 	} // }}}
 
 	def "Should accept phone numbers with incomplete i18n prefix"() { // {{{
@@ -199,8 +229,8 @@ class PhoneUSpec extends Specification {
 			expected == new Phone(phone).toString(local)
 		where:
 			phone         | local || expected
-			'39312312345' | true  || '39312312345'
-			'39312312345' | false || '+3939312312345'
+			'3931231234'  | true  || '3931231234'
+			'3931231234'  | false || '+393931231234'
 			'39 02 8193'  | true  || '028193'
 			'39 02 8193'  | false || '+39028193'
 			// case from the powerlisting report

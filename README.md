@@ -18,13 +18,13 @@
 
 **PhontastIT** is a lightweight, specialized library designed to solve one specific problem perfectly: **parsing and identifying Italian phone numbers**. 
 
-Stop writing complex, fragile Regular Expressions. PhontastIT handles the nuance of Italian numbering plans (landlines, mobiles, toll-free, premium services) with a simple, fluent API.
+Stop writing complex, fragile Regular Expressions. PhontastIT handles the nuance of Italian numbering plans (landlines, mobiles, toll-free, shared-cost, and premium services) with a simple, fluent API.
 
 ## ✨ Features
 
 - 🇮🇹 **Specialized:** Tuned specifically for the Italian numbering plan (+39).
 - 🔍 **Smart Parsing:** Extracts multiple numbers from messy text blocks.
-- 🏷️ **Type Identification:** Distinguishes between Mobile, Landline, Toll-Free, and Premium numbers.
+- 🏷️ **Type Identification:** Distinguishes between Mobile, Landline, Toll-Free, Shared-Cost, and Premium numbers.
 - 🚀 **Zero Dependencies:** Pure Java. No bloat.
 - ⚡ **High Performance:** Stateless, static utility design.
 
@@ -108,6 +108,7 @@ for (Phone p : numbers) {
         case MOBILE   -> System.out.println("📱 Mobile Number");
         case LANDLINE -> System.out.println("☎️ Landline");
         case TOLLFREE -> System.out.println("🆓 Toll-Free Number");
+        case SHARED_COST -> System.out.println("🤝 Shared-Cost Service");
         case PREMIUM  -> System.out.println("💰 Premium Service");
         default       -> System.out.println("❓ Unknown");
     }
@@ -136,8 +137,11 @@ System.out.println(myPhone.toString(true));
 | `Type.LANDLINE` | Traditional geographic numbers (02, 06, 011...) | `02 123456` |
 | `Type.MOBILE` | Mobile networks (TIM, Vodafone, WindTre, Iliad...) | `348 1234567` |
 | `Type.TOLLFREE` | Free-to-call numbers (Verde) | `800 123 456` |
-| `Type.PREMIUM` | Added-rate services (199, 892...) | `892 424` |
+| `Type.SHARED_COST` | Shared-cost services | `840 123 456`, `841 123` |
+| `Type.PREMIUM` | Added-rate services, including the library's collapsed unique/personal ranges | `892 424` |
 | `Type.FAX` | Fax numbers (requires manual identification) | - |
+
+`Type.PREMIUM` intentionally collapses officially distinct "unique" and "personal" service families such as `199...` and `178...` into a single API category.
 
 ## 🤝 Contributing
 
