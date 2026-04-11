@@ -24,17 +24,32 @@ project.ext {
 
 project.with {
 	//project.name is set in the settings.gradle with rootProject.name
-	group 'it.grational.phontastit'
-	version scmVersion.version
-	description "A 'gigawatt' powered project."
+	group = 'it.grational.phontastit'
+	version = scmVersion.version
+	description = "A 'gigawatt' powered project."
 }
 
-// [crosscompile] source and target java version
+// [crosscompile] toolchain and target bytecode version
 java {
-	// java features available in the source code
-	sourceCompatibility = JavaVersion.toVersion('21')
-	// java version 21 is required to execute the project
-	targetCompatibility = sourceCompatibility
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+	withSourcesJar()
+	withJavadocJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release = 8
+	options.compilerArgs += ['-Xlint:-options']
+}
+
+tasks.withType(GroovyCompile).configureEach {
+	sourceCompatibility = '8'
+	targetCompatibility = '8'
+	groovyOptions.configurationScript = file('conf/groovy/compiler-config.groovy')
 }
 
 repositories {
@@ -45,11 +60,6 @@ repositories {
 }
 
 dependencies {
-	// Groovy language support
-	implementation (
-		'org.slf4j:slf4j-api:2.0.17'
-	)
-
 	// We use the awesome Spock testing and specification framework
 	testImplementation (
 		"${groovyGroupId}:groovy:${groovyVersion}",
@@ -88,26 +98,40 @@ release {
 }
 
 // [tasks] definition
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
 	useJUnitPlatform()
-	maxParallelForks = Runtime.runtime.availableProcessors() / 2
+	maxParallelForks = Math.max(1, Runtime.runtime.availableProcessors().intdiv(2))
+	javaLauncher = javaToolchains.launcherFor {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
 }
-task uniTest(type: Test) {
+
+tasks.register('uniTest', Test) {
 	description = 'unit tests task'
 	exclude '**/*ISpec*'
 	exclude '**/*FSpec*'
 }
-task intTest(type: Test) {
+
+tasks.register('intTest', Test) {
 	description = 'integration tests task'
 	exclude '**/*USpec*'
 	exclude '**/*FSpec*'
 }
-task funTest(type: Test) {
+
+tasks.register('funTest', Test) {
 	description = 'functional tests task'
 	exclude '**/*USpec*'
 	exclude '**/*ISpec*'
 }
-gradle.startParameter.excludedTaskNames += "uniTest"
-gradle.startParameter.excludedTaskNames += "intTest"
-gradle.startParameter.excludedTaskNames += "funTest"
+
+[8, 11, 17, 21, 25].each { int version ->
+	tasks.register("testOnJdk${version}", Test) {
+		description = "Runs tests on JDK ${version}"
+		javaLauncher = javaToolchains.launcherFor {
+			languageVersion = JavaLanguageVersion.of(version)
+		}
+	}
+}
+
+gradle.startParameter.excludedTaskNames += ['uniTest', 'intTest', 'funTest']
 // vim: ft=groovy:fdm=indent

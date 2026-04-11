@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime_jdk: '8'
+            test_task: testOnJdk8
+          - runtime_jdk: '11'
+            test_task: testOnJdk11
+          - runtime_jdk: '17'
+            test_task: testOnJdk17
+          - runtime_jdk: '21'
+            test_task: testOnJdk21
+          - runtime_jdk: '25'
+            test_task: testOnJdk25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21 for Gradle
+        id: build_jdk
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Set up runtime JDK ${{ matrix.runtime_jdk }}
+        id: runtime_jdk
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.runtime_jdk }}
+
+      - name: Run build and compatibility tests
+        env:
+          ORG_GRADLE_JAVA_INSTALLATIONS_PATHS: ${{ steps.build_jdk.outputs.path }}:${{ steps.runtime_jdk.outputs.path }}
+        run: |
+          export JAVA_HOME="${{ steps.build_jdk.outputs.path }}"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          ./gradlew --no-daemon clean build ${{ matrix.test_task }}

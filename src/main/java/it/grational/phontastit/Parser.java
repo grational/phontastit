@@ -30,7 +30,7 @@ public class Parser {
 	 * Parse text and extract all valid Italian phone numbers
 	 *
 	 * @param text  the text to parse for phone numbers
-	 * @return List<Phone>  a list of all valid Italian phone numbers found
+	 * @return a list of all valid Italian phone numbers found
 	 */
 	public static List<Phone> parse(String text) { // {{{
 		if (text == null || text.trim().isEmpty()) {

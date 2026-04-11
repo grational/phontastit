@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
  * PhontastIT
  * This class recognize the type of Italian phone numbers using a heuristic
  * @author grational
- * @date 30-08-2018 20.34
  */
 public class Phone {
 	private final String phone;
@@ -179,6 +178,12 @@ public class Phone {
 		return toString(true);
 	}
 
+	/**
+	 * Return the phone number using either the local representation or the +39 prefix.
+	 *
+	 * @param local whether the returned value should omit the international prefix
+	 * @return the formatted phone number
+	 */
 	public String toString(boolean local) {
 		return (local ? "" : IT_PREFIX) + this.phone;
 	}

@@ -2,7 +2,7 @@
 
 ![PhontastIT Logo](logo.svg)
 
-A simple, lightweight Java library to parse and identify Italian phone numbers.
+A simple, lightweight Java 8+ compatible library to parse and identify Italian phone numbers.
 
 Read the [Groovydoc API documentation](groovydoc/index.html).
 
@@ -11,6 +11,7 @@ Read the [Groovydoc API documentation](groovydoc/index.html).
 * **Parse** texts to find Italian phone numbers.
 * **Identify** the type of number (Landline, Mobile, Toll-free, Shared-cost, Premium, etc.).
 * **Zero dependencies** (standard Java library).
+* **Java 8+ compatible** runtime, built with JDK 21.
 
 ## Usage
 
