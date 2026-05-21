@@ -168,17 +168,29 @@ class ParserUSpec extends Specification {
 			result.isEmpty()
 	} // }}}
 
+	@Unroll
 	def "Should find phone numbers in multi-line text"() { // {{{
-		given:
-			def text = """
-				Customer Service
-				Phone: +39 335 5856641
-				Fax: 02 8193736
-			"""
 		when:
 			def result = Parser.parse(text)
 		then:
-			result.size() == 2
+			result.size() == expected
+			result.each { println "Found: ${it} (${it.type()})" }
+		where:
+			text << [
+				"""
+				|Customer Service
+				|Phone: +39 335 5856641
+				|Fax: 02 8193736
+				""",
+				"333.6480325\n011.12345678\nVia Polini 23 Castiglione della Pescaia",
+				"""
+				|333.6480325
+				|011.12345678
+				|Via Polini 23 Castiglione della Pescaia
+				"""
+			]
+		and:
+			expected << [2, 2, 2]
 	} // }}}
 
 	def "Should handle incomplete international prefix (39 only)"() { // {{{

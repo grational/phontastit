@@ -23,7 +23,7 @@ public class Parser {
 	 * The actual validation is delegated to Phone class
 	 */
 	private static final Pattern PHONE_PATTERN = Pattern.compile (
-		"(?:(?:\\+|00)?39[\\s\\-.()]?)?[0-9](?:[\\s\\-./()]{0,2}[0-9]){5,14}"
+		"(?:(?:\\+|00)?39[\\h\\-.()]?)?[0-9](?:[\\h\\-./()]{0,2}[0-9]){5,14}"
 	);
 	
 	/**

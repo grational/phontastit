@@ -80,7 +80,7 @@ class PhoneUSpec extends Specification {
 			// case from https://aziende.virgilio.it/amministrazioni-immobiliari/chieri-to/amministratoregestioneimmobili_cibiib
 			'373 7915844'      | false || Type.MOBILE
 			// from 
-			'1782756067'   | false || Type.PREMIUM
+			'1782756067'       | false || Type.PREMIUM
 			'+39 1782756067'   | false || Type.PREMIUM
 	} // }}}
 
